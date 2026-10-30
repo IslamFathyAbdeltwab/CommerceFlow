@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="../CommerceFlow.Abstraction/CommerceFlow.Abstraction.csproj" />
-  <Project Path="../CommerceFlow.Application/CommerceFlow.Application.csproj" />
-  <Project Path="../CommerceFlow.Domain/CommerceFlow.Domain.csproj" />
-  <Project Path="../CommerceFlow.Infrastructure/CommerceFlow.Infrastructure.csproj" />
-  <Project Path="CommerceFlow.API.csproj" />
-</Solution>

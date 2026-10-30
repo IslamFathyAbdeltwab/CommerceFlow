@@ -1,6 +1,0 @@
-@CommerceFlow.API_HostAddress = http://localhost:5027
-
-GET {{CommerceFlow.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
