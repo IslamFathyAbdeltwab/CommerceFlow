@@ -1,5 +1,5 @@
 ﻿using CommerceFlow.Domain.Common;
-
+using CommerceFlow.Domain.Enums;
 namespace CommerceFlow.Domain.Catalog;
 
 public class Product : AggregateRoot
@@ -93,10 +93,4 @@ public class Product : AggregateRoot
         IsFeatured = false;
         UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
-}
-public enum ProductStatus
-{
-    Draft,
-    Published,
-    Archived
 }
