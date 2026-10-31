@@ -37,7 +37,7 @@ public class Brand : AggregateRoot
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Brand name is required.");
-
+        
         Name = name;
         Slug = slug;
         Description = description;

@@ -1,81 +1,92 @@
 ﻿using CommerceFlow.Domain.Common;
 using CommerceFlow.Domain.Common.Entitiy;
+using CommerceFlow.Domain.Exceptions;
 
-namespace CommerceFlow.Domain.Catalog;
+namespace CommerceFlow.Domain.Entities.Catalog;
 
 public class ProductImage : Entity
 {
+    public const int StorageKeyMaxLength = 500;
+    public const int AltTextMaxLength = 250;
+
     public Guid ProductId { get; private set; }
 
-    public string ImageUrl { get; private set; }
+    // Optional: null = general product image, set = image for one specific variant.
+    public Guid? ProductVariantId { get; private set; }
 
+    // Key/path of the file in object storage, not the file itself.
+    public string StorageKey { get; private set; } = string.Empty;
     public string? AltText { get; private set; }
-
-    public bool IsPrimary { get; private set; }
-
     public int DisplayOrder { get; private set; }
-
+    public bool IsPrimary { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; private set; }
 
-    private ProductImage(
+    private ProductImage() { } // required by EF Core
+
+    // internal: only the Product aggregate root can create an image.
+    internal ProductImage(
         Guid productId,
-        string imageUrl,
+        Guid? productVariantId,
+        string storageKey,
         string? altText,
-        bool isPrimary,
-        int displayOrder)
+        int displayOrder,
+        bool isPrimary)
     {
+        if (productId == Guid.Empty)
+            throw new DomainException("Product ID is required.");
+
+        if (productVariantId == Guid.Empty)
+            throw new DomainException("Variant ID cannot be empty.");
+
+        if (isPrimary && productVariantId.HasValue)
+            throw new DomainException("The primary image must be a product-level image, not a variant image.");
+
+        var (key, alt) = Validate(storageKey, altText, displayOrder);
+
         ProductId = productId;
-        ImageUrl = imageUrl;
-        AltText = altText;
-        IsPrimary = isPrimary;
+        ProductVariantId = productVariantId;
+        StorageKey = key;
+        AltText = alt;
         DisplayOrder = displayOrder;
+        IsPrimary = isPrimary;
         CreatedAtUtc = DateTimeOffset.UtcNow;
     }
 
-    public static ProductImage Create(
-        Guid productId,
-        string imageUrl,
-        string? altText,
-        bool isPrimary,
-        int displayOrder)
+    internal void UpdateDetails(string storageKey, string? altText, int displayOrder)
     {
-        if (productId == Guid.Empty)
-            throw new ArgumentException("Product ID is required.");
+        var (key, alt) = Validate(storageKey, altText, displayOrder);
 
-        if (string.IsNullOrWhiteSpace(imageUrl))
-            throw new ArgumentException("Image URL is required.");
-
-        if (displayOrder < 0)
-            throw new ArgumentException("Display order cannot be negative.");
-
-        return new ProductImage(
-            productId,
-            imageUrl,
-            altText,
-            isPrimary,
-            displayOrder);
-    }
-
-    public void UpdateDetails(string imageUrl, string? altText, int displayOrder)
-    {
-        if (string.IsNullOrWhiteSpace(imageUrl))
-            throw new ArgumentException("Image URL is required.");
-
-        if (displayOrder < 0)
-            throw new ArgumentException("Display order cannot be negative.");
-
-        ImageUrl = imageUrl;
-        AltText = altText;
+        StorageKey = key;
+        AltText = alt;
         DisplayOrder = displayOrder;
     }
 
-    public void SetAsPrimary()
+    internal void MarkAsPrimary()
     {
+        if (ProductVariantId.HasValue)
+            throw new DomainException("The primary image must be a product-level image, not a variant image.");
+
         IsPrimary = true;
     }
 
-    public void RemoveAsPrimary()
+    internal void UnmarkPrimary() => IsPrimary = false;
+
+    private static (string StorageKey, string? AltText) Validate(
+        string? storageKey, string? altText, int displayOrder)
     {
-        IsPrimary = false;
+        if (string.IsNullOrWhiteSpace(storageKey))
+            throw new DomainException("Image storage key is required.");
+        storageKey = storageKey.Trim();
+        if (storageKey.Length > StorageKeyMaxLength)
+            throw new DomainException($"Image storage key cannot exceed {StorageKeyMaxLength} characters.");
+
+        if (displayOrder < 0)
+            throw new DomainException("Display order cannot be negative.");
+
+        var alt = string.IsNullOrWhiteSpace(altText) ? null : altText.Trim();
+        if (alt is { Length: > AltTextMaxLength })
+            throw new DomainException($"Alt text cannot exceed {AltTextMaxLength} characters.");
+
+        return (storageKey, alt);
     }
 }
