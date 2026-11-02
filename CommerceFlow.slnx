@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CommerceFlow.Abstraction/CommerceFlow.Abstraction.csproj" />
+    <Project Path="src/CommerceFlow.API/CommerceFlow.API.csproj" />
+    <Project Path="src/CommerceFlow.Application/CommerceFlow.Application.csproj" />
+    <Project Path="src/CommerceFlow.Domain/CommerceFlow.Domain.csproj" />
+    <Project Path="src/CommerceFlow.Infrastructure/CommerceFlow.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CommerceFlow.Domain.Tests/CommerceFlow.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

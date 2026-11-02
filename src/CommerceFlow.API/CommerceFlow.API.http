@@ -1,4 +1,9 @@
-@CommerceFlow.API_HostAddress = http://localhost:5027
+@CommerceFlow.API_HostAddress = http://localhost:5056
+
+GET {{CommerceFlow.API_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
 
 GET {{CommerceFlow.API_HostAddress}}/weatherforecast/
 Accept: application/json
