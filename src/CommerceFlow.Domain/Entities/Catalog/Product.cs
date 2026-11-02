@@ -128,6 +128,26 @@ public class Product : AggregateRoot
         GetVariant(variantId).ChangePrice(price, compareAtPrice);
         Touch();
     }
+    public void UpdateVariantDetails(
+    Guid variantId,
+    string name,
+    string sku,
+    string? barcode,
+    decimal price,
+    decimal? compareAtPrice,
+    int? weightGrams)
+    {
+        EnsureNotArchived();
+
+        var variant = GetVariant(variantId);
+        var normalizedSku = NormalizeSku(sku);
+
+        if (_variants.Any(v => v.Id != variantId && v.Sku == normalizedSku))
+            throw new DomainException("Variant SKU already exists in this product.");
+
+        variant.UpdateDetails(name, normalizedSku, barcode, price, compareAtPrice, weightGrams);
+        Touch();
+    }
 
     public void ActivateVariant(Guid variantId)
     {
