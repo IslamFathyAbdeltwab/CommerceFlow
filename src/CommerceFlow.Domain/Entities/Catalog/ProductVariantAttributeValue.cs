@@ -1,51 +1,42 @@
-﻿using CommerceFlow.Domain.Common;
-using CommerceFlow.Domain.Common.Entitiy;
+﻿using CommerceFlow.Domain.Exceptions;
 
-namespace CommerceFlow.Domain.Catalog;
+namespace CommerceFlow.Domain.Entities.Catalog;
 
-public class ProductVariantAttributeValue : Entity
+public class ProductVariantAttributeValue
 {
+    public const int ValueMaxLength = 200;
+
     public Guid ProductVariantId { get; private set; }
-
     public Guid ProductAttributeId { get; private set; }
+    public string Value { get; private set; } = string.Empty;
 
-    public string Value { get; private set; }
+    private ProductVariantAttributeValue() { } // required by EF Core
 
-    private ProductVariantAttributeValue(
-        Guid productVariantId,
-        Guid productAttributeId,
-        string value)
-    {
-        ProductVariantId = productVariantId;
-        ProductAttributeId = productAttributeId;
-        Value = value;
-    }
-
-    public static ProductVariantAttributeValue Create(
-        Guid productVariantId,
-        Guid productAttributeId,
-        string value)
+    // internal: only ProductVariant (inside the Product aggregate) creates it.
+    internal ProductVariantAttributeValue(Guid productVariantId, Guid productAttributeId, string value)
     {
         if (productVariantId == Guid.Empty)
-            throw new ArgumentException("Product variant ID is required.");
+            throw new DomainException("Product variant ID is required.");
 
         if (productAttributeId == Guid.Empty)
-            throw new ArgumentException("Product attribute ID is required.");
+            throw new DomainException("Product attribute ID is required.");
 
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Attribute value is required.");
-
-        return new ProductVariantAttributeValue(
-            productVariantId,
-            productAttributeId,
-            value);
+        ProductVariantId = productVariantId;
+        ProductAttributeId = productAttributeId;
+        Value = ValidateValue(value);
     }
 
-    public void UpdateValue(string value)
+    internal void ChangeValue(string value) => Value = ValidateValue(value);
+
+    private static string ValidateValue(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Attribute value is required.");
+            throw new DomainException("Attribute value is required.");
 
-        Value = value;
+        value = value.Trim();
+        if (value.Length > ValueMaxLength)
+            throw new DomainException($"Attribute value cannot exceed {ValueMaxLength} characters.");
+
+        return value;
     }
 }

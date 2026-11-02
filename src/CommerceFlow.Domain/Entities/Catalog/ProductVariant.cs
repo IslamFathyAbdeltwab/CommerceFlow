@@ -124,4 +124,27 @@ public class ProductVariant : AuditableEntity
         if (compareAtPrice.HasValue && compareAtPrice.Value <= price)
             throw new DomainException("Compare-at price must be greater than the price.");
     }
+    private readonly List<ProductVariantAttributeValue> _attributeValues = [];
+    public IReadOnlyCollection<ProductVariantAttributeValue> AttributeValues => _attributeValues.AsReadOnly();
+
+    internal void SetAttributeValue(Guid attributeId, string value)
+    {
+        var existing = _attributeValues.FirstOrDefault(a => a.ProductAttributeId == attributeId);
+
+        if (existing is null)
+            _attributeValues.Add(new ProductVariantAttributeValue(Id, attributeId, value));
+        else
+            existing.ChangeValue(value);
+
+        Touch();
+    }
+
+    internal void RemoveAttributeValue(Guid attributeId)
+    {
+        var existing = _attributeValues.FirstOrDefault(a => a.ProductAttributeId == attributeId)
+            ?? throw new DomainException("Attribute value not found.");
+
+        _attributeValues.Remove(existing);
+        Touch();
+    }
 }

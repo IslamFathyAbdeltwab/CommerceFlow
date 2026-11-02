@@ -1,4 +1,4 @@
-﻿using CommerceFlow.Domain.Catalog;
+﻿//using CommerceFlow.Domain.Catalog;
 using CommerceFlow.Domain.Common;
 using CommerceFlow.Domain.Enums;
 using CommerceFlow.Domain.Exceptions;
@@ -160,6 +160,21 @@ public class Product : AggregateRoot
         Touch();
     }
 
+    public void SetVariantAttributeValue(Guid variantId, Guid attributeId, string value)
+    {
+        EnsureNotArchived();
+
+        GetVariant(variantId).SetAttributeValue(attributeId, value);
+        Touch();
+    }
+
+    public void RemoveVariantAttributeValue(Guid variantId, Guid attributeId)
+    {
+        EnsureNotArchived();
+
+        GetVariant(variantId).RemoveAttributeValue(attributeId);
+        Touch();
+    }
     // ---------- Images ----------
 
     public Guid AddImage(
