@@ -5,6 +5,9 @@
       "CommerceFlow.Abstraction/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "CommerceFlow.Domain": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/CommerceFlow.Abstraction.dll": {}
         },

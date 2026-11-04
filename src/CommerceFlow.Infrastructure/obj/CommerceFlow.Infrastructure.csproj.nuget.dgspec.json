@@ -32,7 +32,11 @@
           "net10.0": {
             "framework": "net10.0",
             "targetAlias": "net10.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "D:\\Invontory & management sys\\CommerceFlow\\src\\CommerceFlow.Domain\\CommerceFlow.Domain.csproj": {
+                "projectPath": "D:\\Invontory & management sys\\CommerceFlow\\src\\CommerceFlow.Domain\\CommerceFlow.Domain.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

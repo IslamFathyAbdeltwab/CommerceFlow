@@ -1,11 +1,30 @@
 {
   "version": 4,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "CommerceFlow.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/CommerceFlow.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CommerceFlow.Domain.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "CommerceFlow.Domain/1.0.0": {
+      "type": "project",
+      "path": "../CommerceFlow.Domain/CommerceFlow.Domain.csproj",
+      "msbuildProject": "../CommerceFlow.Domain/CommerceFlow.Domain.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "CommerceFlow.Domain >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Eslam\\.nuget\\packages\\": {},
@@ -39,7 +58,11 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\Invontory & management sys\\CommerceFlow\\src\\CommerceFlow.Domain\\CommerceFlow.Domain.csproj": {
+              "projectPath": "D:\\Invontory & management sys\\CommerceFlow\\src\\CommerceFlow.Domain\\CommerceFlow.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
