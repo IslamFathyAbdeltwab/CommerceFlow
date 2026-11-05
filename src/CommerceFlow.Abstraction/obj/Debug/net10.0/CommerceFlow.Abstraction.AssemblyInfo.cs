@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CommerceFlow.Abstraction")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f79f9f0e75034686b5433e0dd610f18736ba6a67")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ae6535321cbd5e4902ee51ae377d262baeaecfa")]
 [assembly: System.Reflection.AssemblyProductAttribute("CommerceFlow.Abstraction")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CommerceFlow.Abstraction")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
