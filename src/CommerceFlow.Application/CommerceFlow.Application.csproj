@@ -17,4 +17,34 @@
     <PackageReference Include="MediatR" Version="12.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Catalog\Brands\Commands\CreateBrand\" />
+    <Folder Include="Catalog\Brands\Commands\ActivateBrand\" />
+    <Folder Include="Catalog\Brands\Commands\DeactivateBrand\" />
+    <Folder Include="Catalog\Brands\Commands\UpdateBrand\" />
+    <Folder Include="Catalog\Brands\Queries\GetBrandById\" />
+    <Folder Include="Catalog\Brands\Queries\GetBrandBySlug\" />
+    <Folder Include="Catalog\Brands\Queries\GetBrands\" />
+    <Folder Include="Catalog\Categories\Commands\CreateCategory\" />
+    <Folder Include="Catalog\Categories\Commands\ActivateCategory\" />
+    <Folder Include="Catalog\Categories\Commands\DeactivateCategory\" />
+    <Folder Include="Catalog\Categories\Commands\UpdateCategory\" />
+    <Folder Include="Catalog\Categories\Queries\GetCategoryById\" />
+    <Folder Include="Catalog\Categories\Queries\GetCategoryTree\" />
+    <Folder Include="Catalog\Categories\Queries\GetCategories\" />
+    <Folder Include="Catalog\ProductAttributes\Commands\CreateProductAttribute\" />
+    <Folder Include="Catalog\ProductAttributes\Commands\UpdateProductAttribute\" />
+    <Folder Include="Catalog\ProductAttributes\Queries\GetProductAttributes\" />
+    <Folder Include="Catalog\ProductAttributes\Queries\GetProductAttributeById\" />
+    <Folder Include="Catalog\Products\Commands\ArchiveProduct\" />
+    <Folder Include="Catalog\Products\Commands\AddVariant\" />
+    <Folder Include="Catalog\Products\Commands\ChangeVariantPrice\" />
+    <Folder Include="Catalog\Products\Commands\ActivateVariant\" />
+    <Folder Include="Catalog\Products\Commands\DeactivateVariant\" />
+    <Folder Include="Catalog\Products\Commands\RemoveVariant\" />
+    <Folder Include="Catalog\Products\Commands\UpdateVariant\" />
+    <Folder Include="Catalog\Products\Commands\PublishProduct\" />
+    <Folder Include="Catalog\Products\Commands\UpdateProduct\" />
+  </ItemGroup>
+
 </Project>

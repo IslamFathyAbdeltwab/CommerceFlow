@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CommerceFlow.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ae6535321cbd5e4902ee51ae377d262baeaecfa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c68a1351024f457f0a00fa9811f46125bffafa53")]
 [assembly: System.Reflection.AssemblyProductAttribute("CommerceFlow.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CommerceFlow.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

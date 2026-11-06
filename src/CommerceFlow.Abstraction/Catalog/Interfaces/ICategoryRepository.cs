@@ -5,6 +5,23 @@ namespace CommerceFlow.Application.Catalog.Interfaces;
 public interface ICategoryRepository
 {
     Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<Category?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Category>> GetAllAsync(
+        string? searchTerm,
+        bool? isActive,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    Task<int> CountAsync(
+        string? searchTerm,
+        bool? isActive,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Category>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> AllExistAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
     Task<bool> SlugExistsAsync(string slug, Guid? excludeCategoryId = null, CancellationToken cancellationToken = default);
