@@ -1,3 +1,4 @@
+using CommerceFlow.API.Common;
 using CommerceFlow.Application;
 using CommerceFlow.Infrastructure;
 
@@ -18,6 +19,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
