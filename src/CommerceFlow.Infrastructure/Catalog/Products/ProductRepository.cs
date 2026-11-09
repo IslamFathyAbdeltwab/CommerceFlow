@@ -68,6 +68,24 @@ internal sealed class ProductRepository(CommerceFlowDbContext dbContext) : IProd
             maxPrice)
             .CountAsync(cancellationToken);
 
+    public async Task<Product?> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => await dbContext.Products
+            .AsNoTracking()
+            .Include(p => p.Variants)
+                .ThenInclude(v => v.AttributeValues)
+            .Include(p => p.Images)
+            .Include(p => p.Categories)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+    public async Task<Product?> GetProductBySlugAsync(string slug, CancellationToken cancellationToken = default)
+        => await dbContext.Products
+            .AsNoTracking()
+            .Include(p => p.Variants)
+                .ThenInclude(v => v.AttributeValues)
+            .Include(p => p.Images)
+            .Include(p => p.Categories)
+            .FirstOrDefaultAsync(p => p.Slug == slug, cancellationToken);
+
     public async Task<Product?> GetPublishedProductByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => await dbContext.Products
             .AsNoTracking()

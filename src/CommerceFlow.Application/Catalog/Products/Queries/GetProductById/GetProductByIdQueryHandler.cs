@@ -9,7 +9,7 @@ public sealed class GetProductByIdQueryHandler(
 {
     public async Task<ProductDetailDto?> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        var product = await products.GetPublishedProductByIdAsync(request.ProductId, cancellationToken);
+        var product = await products.GetProductByIdAsync(request.ProductId, cancellationToken);
         if (product is null)
             return null;
 

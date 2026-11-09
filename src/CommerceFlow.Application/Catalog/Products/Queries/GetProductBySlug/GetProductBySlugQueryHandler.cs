@@ -10,7 +10,7 @@ public sealed class GetProductBySlugQueryHandler(
     public async Task<ProductDetailDto?> Handle(GetProductBySlugQuery request, CancellationToken cancellationToken)
     {
         var slug = request.Slug.Trim().ToLowerInvariant();
-        var product = await products.GetPublishedProductBySlugAsync(slug, cancellationToken);
+        var product = await products.GetProductBySlugAsync(slug, cancellationToken);
         if (product is null)
             return null;
 

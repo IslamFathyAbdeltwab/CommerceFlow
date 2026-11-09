@@ -37,6 +37,22 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
             .OnDelete(DeleteBehavior.SetNull);
 
         // Product is the aggregate root for Variants, Images and Categories (inside-aggregate navigations).
+        // HasMany is required so EF tracks new children as Added (fix DbUpdateConcurrencyException).
+        builder.HasMany(p => p.Variants)
+            .WithOne()
+            .HasForeignKey(v => v.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Images)
+            .WithOne()
+            .HasForeignKey(i => i.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Categories)
+            .WithOne()
+            .HasForeignKey(pc => pc.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Navigation(p => p.Variants).HasField("_variants").UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.Navigation(p => p.Images).HasField("_images").UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.Navigation(p => p.Categories).HasField("_categories").UsePropertyAccessMode(PropertyAccessMode.Field);
@@ -79,6 +95,11 @@ internal sealed class ProductVariantConfiguration : IEntityTypeConfiguration<Pro
         builder.HasIndex(v => v.ProductId);
         builder.HasIndex(v => v.IsActive);
 
+        builder.HasMany(v => v.AttributeValues)
+            .WithOne()
+            .HasForeignKey(av => av.ProductVariantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Navigation(v => v.AttributeValues).HasField("_attributeValues").UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }
@@ -115,6 +136,11 @@ internal sealed class ProductCategoryConfiguration : IEntityTypeConfiguration<Pr
         builder.Property(pc => pc.AssignedAtUtc).IsRequired();
 
         builder.HasIndex(pc => pc.CategoryId);
+
+        builder.HasOne<Category>()
+            .WithMany()
+            .HasForeignKey(pc => pc.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
@@ -130,5 +156,10 @@ internal sealed class ProductVariantAttributeValueConfiguration : IEntityTypeCon
         builder.Property(v => v.Value)
             .IsRequired()
             .HasMaxLength(ProductVariantAttributeValue.ValueMaxLength);
+
+        builder.HasOne<ProductAttribute>()
+            .WithMany()
+            .HasForeignKey(v => v.ProductAttributeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

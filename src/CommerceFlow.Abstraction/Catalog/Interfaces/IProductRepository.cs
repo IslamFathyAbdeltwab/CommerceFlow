@@ -7,6 +7,11 @@ public interface IProductRepository
     // Loads the whole aggregate (variants, attribute values, images, categories) so it can be changed.
     Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
+    // Read-side lookups (any status: Draft/Published/Archived) for admin & storefront detail pages.
+    Task<Product?> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<Product?> GetProductBySlugAsync(string slug, CancellationToken cancellationToken = default);
+
     // Read-side projections. These stay out of the write-model aggregate.
     Task<IReadOnlyList<Product>> GetPublishedProductsAsync(
         string? searchTerm,

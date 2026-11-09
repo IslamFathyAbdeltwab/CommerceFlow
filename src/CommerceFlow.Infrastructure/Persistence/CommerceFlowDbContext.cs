@@ -20,5 +20,17 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CommerceFlowDbContext).Assembly);
+
+        // Domain generates Guids (Entity base does Guid.NewGuid()).
+        // Tell EF keys are client-generated so new children (ProductVariant, ProductImage)
+        // discovered via aggregate navigations are INSERTed, not UPDATE-d (DbUpdateConcurrency).
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var idProperty = entityType.FindProperty("Id");
+            if (idProperty is not null && idProperty.ClrType == typeof(Guid))
+            {
+                idProperty.ValueGenerated = Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.Never;
+            }
+        }
     }
 }

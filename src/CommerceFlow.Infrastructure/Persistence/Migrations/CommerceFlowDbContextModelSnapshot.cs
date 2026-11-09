@@ -25,7 +25,6 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Brand", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
@@ -66,7 +65,6 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Category", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
@@ -111,7 +109,6 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Product", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("BrandId")
@@ -163,7 +160,6 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.ProductAttribute", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
@@ -220,7 +216,6 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.ProductImage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AltText")
@@ -259,7 +254,6 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.ProductVariant", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Barcode")
@@ -328,6 +322,8 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
 
                     b.HasKey("ProductVariantId", "ProductAttributeId");
 
+                    b.HasIndex("ProductAttributeId");
+
                     b.ToTable("ProductVariantAttributeValues", (string)null);
                 });
 
@@ -341,6 +337,12 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.ProductCategory", b =>
                 {
+                    b.HasOne("CommerceFlow.Domain.Entities.Catalog.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CommerceFlow.Domain.Entities.Catalog.Product", null)
                         .WithMany("Categories")
                         .HasForeignKey("ProductId")
@@ -368,6 +370,12 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.ProductVariantAttributeValue", b =>
                 {
+                    b.HasOne("CommerceFlow.Domain.Entities.Catalog.ProductAttribute", null)
+                        .WithMany()
+                        .HasForeignKey("ProductAttributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CommerceFlow.Domain.Entities.Catalog.ProductVariant", null)
                         .WithMany("AttributeValues")
                         .HasForeignKey("ProductVariantId")
