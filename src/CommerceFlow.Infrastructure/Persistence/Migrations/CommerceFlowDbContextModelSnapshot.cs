@@ -327,6 +327,206 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                     b.ToTable("ProductVariantAttributeValues", (string)null);
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Inventory.InventoryItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("OnHandQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ReorderThreshold")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReservedQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.HasIndex("WarehouseId", "ProductVariantId")
+                        .IsUnique();
+
+                    b.ToTable("InventoryItems", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Inventory.InventoryReservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("ExpiresAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ReleasedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAtUtc");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("InventoryReservations", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Inventory.InventoryReservationItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("InventoryReservationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.HasIndex("InventoryReservationId", "WarehouseId", "ProductVariantId")
+                        .IsUnique();
+
+                    b.ToTable("InventoryReservationItems", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Inventory.StockMovement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtcMovement")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("MovementType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("PerformedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("QuantityAfter")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityChange")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReferenceType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAtUtcMovement");
+
+                    b.HasIndex("MovementType");
+
+                    b.HasIndex("ReferenceId");
+
+                    b.HasIndex("WarehouseId", "ProductVariantId");
+
+                    b.ToTable("StockMovements", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Inventory.Warehouse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Warehouses", (string)null);
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Product", b =>
                 {
                     b.HasOne("CommerceFlow.Domain.Entities.Catalog.Brand", null)
@@ -383,6 +583,15 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Inventory.InventoryReservationItem", b =>
+                {
+                    b.HasOne("CommerceFlow.Domain.Entities.Inventory.InventoryReservation", null)
+                        .WithMany("Items")
+                        .HasForeignKey("InventoryReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Product", b =>
                 {
                     b.Navigation("Categories");
@@ -395,6 +604,11 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.ProductVariant", b =>
                 {
                     b.Navigation("AttributeValues");
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Inventory.InventoryReservation", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

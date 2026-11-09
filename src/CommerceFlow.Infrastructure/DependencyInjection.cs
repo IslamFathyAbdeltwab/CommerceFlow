@@ -1,9 +1,14 @@
 using CommerceFlow.Application.Catalog.Interfaces;
 using CommerceFlow.Application.Common.Interfaces;
+using CommerceFlow.Application.Inventory.Interfaces;
 using CommerceFlow.Infrastructure.Catalog.Brands;
 using CommerceFlow.Infrastructure.Catalog.Categories;
 using CommerceFlow.Infrastructure.Catalog.ProductAttributes;
 using CommerceFlow.Infrastructure.Catalog.Products;
+using CommerceFlow.Infrastructure.Inventory.InventoryItems;
+using CommerceFlow.Infrastructure.Inventory.Reservations;
+using CommerceFlow.Infrastructure.Inventory.StockMovements;
+using CommerceFlow.Infrastructure.Inventory.Warehouses;
 using CommerceFlow.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +33,11 @@ public static class DependencyInjection
         services.AddScoped<IBrandRepository, BrandRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
+
+        services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+        services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
+        services.AddScoped<IInventoryReservationRepository, InventoryReservationRepository>();
+        services.AddScoped<IStockMovementRepository, StockMovementRepository>();
         return services;
     }
 }
