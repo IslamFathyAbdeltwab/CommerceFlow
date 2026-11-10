@@ -1,5 +1,6 @@
 using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
+using CommerceFlow.Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommerceFlow.Infrastructure.Persistence;
@@ -23,6 +24,9 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
     public DbSet<InventoryReservation> InventoryReservations => Set<InventoryReservation>();
     public DbSet<InventoryReservationItem> InventoryReservationItems => Set<InventoryReservationItem>();
     public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderLine> OrderLines => Set<OrderLine>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
