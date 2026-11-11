@@ -22,6 +22,59 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Carts.Cart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique()
+                        .HasFilter("[Status] = 0");
+
+                    b.ToTable("Carts", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Carts.CartLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("AddedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("CartId", "ProductVariantId")
+                        .IsUnique();
+
+                    b.ToTable("CartLines", (string)null);
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Brand", b =>
                 {
                     b.Property<Guid>("Id")
@@ -639,6 +692,15 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                     b.ToTable("OrderLines", (string)null);
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Carts.CartLine", b =>
+                {
+                    b.HasOne("CommerceFlow.Domain.Entities.Carts.Cart", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Product", b =>
                 {
                     b.HasOne("CommerceFlow.Domain.Entities.Catalog.Brand", null)
@@ -775,6 +837,11 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Carts.Cart", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Catalog.Product", b =>

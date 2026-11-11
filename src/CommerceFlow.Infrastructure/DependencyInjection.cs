@@ -1,8 +1,10 @@
+using CommerceFlow.Application.Carts.Interfaces;
 using CommerceFlow.Application.Catalog.Interfaces;
 using CommerceFlow.Application.Common.Interfaces;
 using CommerceFlow.Application.Inventory.Interfaces;
 using CommerceFlow.Application.Orders.Interfaces;
 using CommerceFlow.Infrastructure.Catalog.Brands;
+using CommerceFlow.Infrastructure.Carts;
 using CommerceFlow.Infrastructure.Catalog.Categories;
 using CommerceFlow.Infrastructure.Catalog.ProductAttributes;
 using CommerceFlow.Infrastructure.Catalog.Products;
@@ -42,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<ICartRepository, CartRepository>();
         return services;
     }
 }

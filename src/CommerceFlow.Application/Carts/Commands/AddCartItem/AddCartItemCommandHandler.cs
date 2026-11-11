@@ -19,8 +19,9 @@ public sealed class AddCartItemCommandHandler(
         if (cart.Status != CartStatus.Active)
             throw new ConflictException("Cart items can only be changed while the cart is active.");
 
-        // NOTE: variant existence is enforced by the Infrastructure FK (same
-        // decision as Inventory items) - Application must not cross into Catalog.
+        // NOTE: Application must not cross into the Catalog aggregate - variant
+        // existence belongs to the checkout flow (same decision as Inventory
+        // items and Order lines, which also reference variants by ID only).
         if (cart.LineCount >= Cart.MaxLines
             && cart.Lines.All(l => l.ProductVariantId != request.ProductVariantId))
             throw new ConflictException($"A cart cannot have more than {Cart.MaxLines} lines.");

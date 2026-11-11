@@ -1,3 +1,4 @@
+using CommerceFlow.Domain.Entities.Carts;
 using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
 using CommerceFlow.Domain.Entities.Orders;
@@ -27,6 +28,9 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
 
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderLine> OrderLines => Set<OrderLine>();
+
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartLine> CartLines => Set<CartLine>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
