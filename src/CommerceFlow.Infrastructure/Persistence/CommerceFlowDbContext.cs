@@ -2,6 +2,7 @@ using CommerceFlow.Domain.Entities.Carts;
 using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
 using CommerceFlow.Domain.Entities.Orders;
+using CommerceFlow.Domain.Entities.Wishlists;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommerceFlow.Infrastructure.Persistence;
@@ -31,6 +32,9 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
 
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<CartLine> CartLines => Set<CartLine>();
+
+    public DbSet<Wishlist> Wishlists => Set<Wishlist>();
+    public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -692,6 +692,52 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                     b.ToTable("OrderLines", (string)null);
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.Wishlist", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.ToTable("Wishlists", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.WishlistItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("AddedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WishlistId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("WishlistId", "ProductVariantId")
+                        .IsUnique();
+
+                    b.ToTable("WishlistItems", (string)null);
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Carts.CartLine", b =>
                 {
                     b.HasOne("CommerceFlow.Domain.Entities.Carts.Cart", null)
@@ -839,6 +885,15 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.WishlistItem", b =>
+                {
+                    b.HasOne("CommerceFlow.Domain.Entities.Wishlists.Wishlist", null)
+                        .WithMany("Items")
+                        .HasForeignKey("WishlistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Carts.Cart", b =>
                 {
                     b.Navigation("Lines");
@@ -866,6 +921,11 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Orders.Order", b =>
                 {
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.Wishlist", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

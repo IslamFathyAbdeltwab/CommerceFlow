@@ -3,6 +3,7 @@ using CommerceFlow.Application.Catalog.Interfaces;
 using CommerceFlow.Application.Common.Interfaces;
 using CommerceFlow.Application.Inventory.Interfaces;
 using CommerceFlow.Application.Orders.Interfaces;
+using CommerceFlow.Application.Wishlists.Interfaces;
 using CommerceFlow.Infrastructure.Catalog.Brands;
 using CommerceFlow.Infrastructure.Carts;
 using CommerceFlow.Infrastructure.Catalog.Categories;
@@ -14,6 +15,7 @@ using CommerceFlow.Infrastructure.Inventory.StockMovements;
 using CommerceFlow.Infrastructure.Inventory.Warehouses;
 using CommerceFlow.Infrastructure.Orders;
 using CommerceFlow.Infrastructure.Persistence;
+using CommerceFlow.Infrastructure.Wishlists;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +47,7 @@ public static class DependencyInjection
 
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<IWishlistRepository, WishlistRepository>();
         return services;
     }
 }
