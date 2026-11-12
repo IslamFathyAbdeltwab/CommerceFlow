@@ -822,6 +822,86 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                     b.ToTable("Payments", (string)null);
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Shipping.Shipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CancelledAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Carrier")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("DeliveredAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ServiceLevel")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset?>("ShippedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrackingNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("TrackingNumber")
+                        .IsUnique();
+
+                    b.ToTable("Shipments", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Shipping.ShipmentItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductVariantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ShipmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("ShipmentId", "ProductVariantId")
+                        .IsUnique();
+
+                    b.ToTable("ShipmentItems", (string)null);
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.Wishlist", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1015,6 +1095,15 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Shipping.ShipmentItem", b =>
+                {
+                    b.HasOne("CommerceFlow.Domain.Entities.Shipping.Shipment", null)
+                        .WithMany("Items")
+                        .HasForeignKey("ShipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.WishlistItem", b =>
                 {
                     b.HasOne("CommerceFlow.Domain.Entities.Wishlists.Wishlist", null)
@@ -1051,6 +1140,11 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Orders.Order", b =>
                 {
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Shipping.Shipment", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.Wishlist", b =>

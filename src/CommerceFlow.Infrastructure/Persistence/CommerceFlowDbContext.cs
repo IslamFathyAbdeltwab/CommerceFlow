@@ -4,6 +4,7 @@ using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
 using CommerceFlow.Domain.Entities.Orders;
 using CommerceFlow.Domain.Entities.Payments;
+using CommerceFlow.Domain.Entities.Shipping;
 using CommerceFlow.Domain.Entities.Wishlists;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,9 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
     public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();
 
     public DbSet<Payment> Payments => Set<Payment>();
+
+    public DbSet<Shipment> Shipments => Set<Shipment>();
+    public DbSet<ShipmentItem> ShipmentItems => Set<ShipmentItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
