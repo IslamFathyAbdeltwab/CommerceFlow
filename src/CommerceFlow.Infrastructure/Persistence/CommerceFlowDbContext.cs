@@ -1,3 +1,4 @@
+using CommerceFlow.Domain.Entities.Addresses;
 using CommerceFlow.Domain.Entities.Carts;
 using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
@@ -35,6 +36,8 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
 
     public DbSet<Wishlist> Wishlists => Set<Wishlist>();
     public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
+
+    public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

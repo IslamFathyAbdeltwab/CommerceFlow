@@ -51,18 +51,20 @@ public sealed class AddressCommandHandlerTests
     {
         var handler = new CreateAddressCommandHandler(_addresses.Object, _unitOfWork.Object);
         var customerId = Guid.NewGuid();
-        var previousDefault = AddressFixtures.CreateAddress(customerId, isDefault: true);
         _addresses
             .Setup(x => x.CountAsync(customerId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(2); // not the first address
-        _addresses
-            .Setup(x => x.GetDefaultAsync(customerId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(previousDefault);
 
         var command = AddressFixtures.ValidCreateCommand(customerId) with { IsDefault = true };
         var id = await handler.Handle(command, CancellationToken.None);
 
-        Assert.False(previousDefault.IsDefault); // cleared in the same SaveChanges
+        // previous default cleared as its own statement, before the save
+        _addresses.Verify(
+            x => x.ClearDefaultAsync(customerId, Guid.Empty, It.IsAny<CancellationToken>()),
+            Times.Once);
+        _addresses.Verify(
+            x => x.GetDefaultAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            Times.Never);
         _addresses.Verify(
             x => x.AddAsync(
                 It.Is<CustomerAddress>(a => a.Id == id && a.IsDefault),
@@ -88,9 +90,8 @@ public sealed class AddressCommandHandlerTests
                 It.Is<CustomerAddress>(a => a.Id == id && !a.IsDefault),
                 It.IsAny<CancellationToken>()),
             Times.Once);
-        // nothing to clear: no default lookup needed
         _addresses.Verify(
-            x => x.GetDefaultAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            x => x.ClearDefaultAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
             Times.Never);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -164,7 +165,7 @@ public sealed class AddressCommandHandlerTests
             handler.Handle(new SetDefaultAddressCommand(addressId), CancellationToken.None));
 
         _addresses.Verify(
-            x => x.GetDefaultAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            x => x.ClearDefaultAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
             Times.Never);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -174,21 +175,21 @@ public sealed class AddressCommandHandlerTests
     {
         var handler = new SetDefaultAddressCommandHandler(_addresses.Object, _unitOfWork.Object);
         var target = AddressFixtures.CreateAddress(); // not default
-        var previousDefault = AddressFixtures.CreateAddress(isDefault: true);
         SetupAddress(target);
-        _addresses
-            .Setup(x => x.GetDefaultAsync(target.CustomerId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(previousDefault);
 
         await handler.Handle(new SetDefaultAddressCommand(target.Id), CancellationToken.None);
 
         Assert.True(target.IsDefault);
-        Assert.False(previousDefault.IsDefault); // one default per customer
+        // old default cleared in the DB as its own statement (keeps the unique
+        // filtered index happy), new default written by the single save
+        _addresses.Verify(
+            x => x.ClearDefaultAsync(target.CustomerId, target.Id, It.IsAny<CancellationToken>()),
+            Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task SetDefault_WhenAlreadyDefault_DoesNotQueryPreviousDefault()
+    public async Task SetDefault_WhenAlreadyDefault_DoesNotClearPreviousDefault()
     {
         var handler = new SetDefaultAddressCommandHandler(_addresses.Object, _unitOfWork.Object);
         var target = AddressFixtures.CreateAddress(isDefault: true);
@@ -198,7 +199,7 @@ public sealed class AddressCommandHandlerTests
 
         Assert.True(target.IsDefault);
         _addresses.Verify(
-            x => x.GetDefaultAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            x => x.ClearDefaultAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
             Times.Never); // already default: nothing to clear
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }

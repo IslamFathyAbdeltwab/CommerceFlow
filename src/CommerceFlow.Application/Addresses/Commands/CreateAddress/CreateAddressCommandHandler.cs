@@ -28,7 +28,8 @@ public sealed class CreateAddressCommandHandler(
             phoneNumber: request.PhoneNumber,
             isDefault: isDefault);
 
-        if (isDefault)
+        // nothing to clear for the very first address (no rows match)
+        if (isDefault && !isFirstAddress)
             await AddressDefaults.ClearPreviousAsync(
                 addresses, request.CustomerId, Guid.Empty, cancellationToken);
 
