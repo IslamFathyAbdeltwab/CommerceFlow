@@ -4,6 +4,8 @@ using CommerceFlow.Application.Catalog.Interfaces;
 using CommerceFlow.Application.Common.Interfaces;
 using CommerceFlow.Application.Inventory.Interfaces;
 using CommerceFlow.Application.Orders.Interfaces;
+using CommerceFlow.Application.Payments.Gateways;
+using CommerceFlow.Application.Payments.Interfaces;
 using CommerceFlow.Application.Wishlists.Interfaces;
 using CommerceFlow.Infrastructure.Addresses;
 using CommerceFlow.Infrastructure.Catalog.Brands;
@@ -16,6 +18,8 @@ using CommerceFlow.Infrastructure.Inventory.Reservations;
 using CommerceFlow.Infrastructure.Inventory.StockMovements;
 using CommerceFlow.Infrastructure.Inventory.Warehouses;
 using CommerceFlow.Infrastructure.Orders;
+using CommerceFlow.Infrastructure.Payments;
+using CommerceFlow.Infrastructure.Payments.Gateways;
 using CommerceFlow.Infrastructure.Persistence;
 using CommerceFlow.Infrastructure.Wishlists;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +55,15 @@ public static class DependencyInjection
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<IWishlistRepository, WishlistRepository>();
         services.AddScoped<ICustomerAddressRepository, CustomerAddressRepository>();
+
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+        // Strategy: one class per provider + one line here to add another
+        // (open/closed). The resolver picks the implementation by name.
+        services.AddScoped<IPaymentGateway, FakePayGateway>();
+        services.AddScoped<IPaymentGateway, StripeGateway>();
+        services.AddScoped<IPaymentGateway, PayPalGateway>();
+        services.AddScoped<IPaymentGatewayResolver, PaymentGatewayResolver>();
         return services;
     }
 }
