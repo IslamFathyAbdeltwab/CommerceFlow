@@ -4,6 +4,8 @@ using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
 using CommerceFlow.Domain.Entities.Orders;
 using CommerceFlow.Domain.Entities.Payments;
+using CommerceFlow.Domain.Entities.Returns;
+using CommerceFlow.Domain.Entities.Reviews;
 using CommerceFlow.Domain.Entities.Shipping;
 using CommerceFlow.Domain.Entities.Wishlists;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +47,11 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
 
     public DbSet<Shipment> Shipments => Set<Shipment>();
     public DbSet<ShipmentItem> ShipmentItems => Set<ShipmentItem>();
+
+    public DbSet<ReturnRequest> ReturnRequests => Set<ReturnRequest>();
+    public DbSet<ReturnItem> ReturnItems => Set<ReturnItem>();
+
+    public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

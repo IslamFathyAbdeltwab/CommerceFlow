@@ -6,6 +6,8 @@ using CommerceFlow.Application.Inventory.Interfaces;
 using CommerceFlow.Application.Orders.Interfaces;
 using CommerceFlow.Application.Payments.Gateways;
 using CommerceFlow.Application.Payments.Interfaces;
+using CommerceFlow.Application.Returns.Interfaces;
+using CommerceFlow.Application.Reviews.Interfaces;
 using CommerceFlow.Application.Shipping.Interfaces;
 using CommerceFlow.Application.Wishlists.Interfaces;
 using CommerceFlow.Infrastructure.Addresses;
@@ -22,6 +24,8 @@ using CommerceFlow.Infrastructure.Orders;
 using CommerceFlow.Infrastructure.Payments;
 using CommerceFlow.Infrastructure.Payments.Gateways;
 using CommerceFlow.Infrastructure.Persistence;
+using CommerceFlow.Infrastructure.Returns;
+using CommerceFlow.Infrastructure.Reviews;
 using CommerceFlow.Infrastructure.Shipping;
 using CommerceFlow.Infrastructure.Wishlists;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +65,9 @@ public static class DependencyInjection
         services.AddScoped<IPaymentRepository, PaymentRepository>();
 
         services.AddScoped<IShipmentRepository, ShipmentRepository>();
+
+        services.AddScoped<IReturnRequestRepository, ReturnRequestRepository>();
+        services.AddScoped<IProductReviewRepository, ProductReviewRepository>();
 
         // Strategy: one class per provider + one line here to add another
         // (open/closed). The resolver picks the implementation by name.
