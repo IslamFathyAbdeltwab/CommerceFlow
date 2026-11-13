@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CommerceFlow.Abstraction")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4b486c34653ef2f85a28f56e19f46fb25f5dfc4c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f03fbb0d3d995aa7d5e604ebcc2de8b09c9e571d")]
 [assembly: System.Reflection.AssemblyProductAttribute("CommerceFlow.Abstraction")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CommerceFlow.Abstraction")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
