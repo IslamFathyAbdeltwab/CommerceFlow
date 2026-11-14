@@ -43,6 +43,7 @@ public sealed class BrandsController(ISender sender) : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> CreateBrand(CreateBrandCommand command, CancellationToken cancellationToken = default)
+    
     {
         var id = await sender.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetBrandById), new { id }, new { id });
