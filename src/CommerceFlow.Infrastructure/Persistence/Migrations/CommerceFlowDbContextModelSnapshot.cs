@@ -822,6 +822,112 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                     b.ToTable("Payments", (string)null);
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Promotions.Promotion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ActivatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("CurrentUses")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DiscountType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DiscountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset?>("EndAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("ExpiredAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("MaxUsesPerCustomer")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxUsesTotal")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("MinOrderAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTimeOffset?>("PausedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("StartAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("Promotions", (string)null);
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Promotions.PromotionUsage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("DiscountTaken")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PromotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("UsedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PromotionId");
+
+                    b.HasIndex("PromotionId", "OrderId")
+                        .IsUnique();
+
+                    b.ToTable("PromotionUsages", (string)null);
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Returns.ReturnItem", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1237,6 +1343,15 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Promotions.PromotionUsage", b =>
+                {
+                    b.HasOne("CommerceFlow.Domain.Entities.Promotions.Promotion", null)
+                        .WithMany("Usages")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Returns.ReturnItem", b =>
                 {
                     b.HasOne("CommerceFlow.Domain.Entities.Returns.ReturnRequest", null)
@@ -1291,6 +1406,11 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Orders.Order", b =>
                 {
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Promotions.Promotion", b =>
+                {
+                    b.Navigation("Usages");
                 });
 
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Returns.ReturnRequest", b =>

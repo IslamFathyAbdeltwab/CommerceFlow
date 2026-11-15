@@ -4,6 +4,7 @@ using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
 using CommerceFlow.Domain.Entities.Orders;
 using CommerceFlow.Domain.Entities.Payments;
+using CommerceFlow.Domain.Entities.Promotions;
 using CommerceFlow.Domain.Entities.Returns;
 using CommerceFlow.Domain.Entities.Reviews;
 using CommerceFlow.Domain.Entities.Shipping;
@@ -52,6 +53,9 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
     public DbSet<ReturnItem> ReturnItems => Set<ReturnItem>();
 
     public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
+
+    public DbSet<Promotion> Promotions => Set<Promotion>();
+    public DbSet<PromotionUsage> PromotionUsages => Set<PromotionUsage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

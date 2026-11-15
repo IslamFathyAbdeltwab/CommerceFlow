@@ -240,6 +240,11 @@ public class Promotion : AggregateRoot
         if (discountTaken <= 0)
             throw new DomainException("Discount taken must be positive.");
 
+        // one redemption per order per campaign (the database unique index on
+        // (PromotionId, OrderId) is the backstop)
+        if (_usages.Any(u => u.OrderId == orderId))
+            throw new DomainException("Promotion has already been redeemed on this order.");
+
         EnsureRedeemable(customerId, now ?? DateTimeOffset.UtcNow);
 
         _usages.Add(new PromotionUsage(Id, customerId, orderId, discountTaken));

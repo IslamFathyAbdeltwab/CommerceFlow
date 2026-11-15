@@ -955,6 +955,20 @@ public class PromotionTests
         Assert.Equal(1, promotion.CurrentUses);
     }
 
+    [Fact]
+    public void RecordUsage_SameOrderTwice_Throws()
+    {
+        var promotion = ActivePromotion();
+        promotion.RecordUsage(CustomerId, OrderId, 10m, now: MidWindow);
+
+        var exception = Assert.Throws<DomainException>(() =>
+            promotion.RecordUsage(CustomerId, OrderId, 10m, now: MidWindow));
+
+        Assert.Equal("Promotion has already been redeemed on this order.",
+            exception.Message);
+        Assert.Equal(1, promotion.CurrentUses);
+    }
+
     // ---------- CalculateDiscount ----------
 
     [Fact]
