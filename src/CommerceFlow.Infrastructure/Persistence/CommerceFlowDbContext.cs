@@ -2,6 +2,7 @@ using CommerceFlow.Domain.Entities.Addresses;
 using CommerceFlow.Domain.Entities.Carts;
 using CommerceFlow.Domain.Entities.Catalog;
 using CommerceFlow.Domain.Entities.Inventory;
+using CommerceFlow.Domain.Entities.Notifications;
 using CommerceFlow.Domain.Entities.Orders;
 using CommerceFlow.Domain.Entities.Payments;
 using CommerceFlow.Domain.Entities.Promotions;
@@ -56,6 +57,8 @@ public sealed class CommerceFlowDbContext(DbContextOptions<CommerceFlowDbContext
 
     public DbSet<Promotion> Promotions => Set<Promotion>();
     public DbSet<PromotionUsage> PromotionUsages => Set<PromotionUsage>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -3,6 +3,7 @@ using CommerceFlow.Application.Carts.Interfaces;
 using CommerceFlow.Application.Catalog.Interfaces;
 using CommerceFlow.Application.Common.Interfaces;
 using CommerceFlow.Application.Inventory.Interfaces;
+using CommerceFlow.Application.Notifications.Interfaces;
 using CommerceFlow.Application.Orders.Interfaces;
 using CommerceFlow.Application.Payments.Gateways;
 using CommerceFlow.Application.Payments.Interfaces;
@@ -21,6 +22,7 @@ using CommerceFlow.Infrastructure.Inventory.InventoryItems;
 using CommerceFlow.Infrastructure.Inventory.Reservations;
 using CommerceFlow.Infrastructure.Inventory.StockMovements;
 using CommerceFlow.Infrastructure.Inventory.Warehouses;
+using CommerceFlow.Infrastructure.Notifications;
 using CommerceFlow.Infrastructure.Orders;
 using CommerceFlow.Infrastructure.Payments;
 using CommerceFlow.Infrastructure.Payments.Gateways;
@@ -72,6 +74,13 @@ public static class DependencyInjection
         services.AddScoped<IProductReviewRepository, ProductReviewRepository>();
 
         services.AddScoped<IPromotionRepository, PromotionRepository>();
+
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+
+        // The transport lives behind the port: RabbitMQ today, an in-process
+        // channel could replace it with one line - Application never sees the
+        // broker. Singleton because it owns the (lazy) connection.
+        services.AddSingleton<INotificationQueue, RabbitNotificationQueue>();
 
         // Strategy: one class per provider + one line here to add another
         // (open/closed). The resolver picks the implementation by name.
