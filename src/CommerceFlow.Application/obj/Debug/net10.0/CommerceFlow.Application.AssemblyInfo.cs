@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CommerceFlow.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da08078bab35370794473ab12ed8073ca402b8c5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ea77e435dfbf7eddf5d4113c2ded06736cb8914")]
 [assembly: System.Reflection.AssemblyProductAttribute("CommerceFlow.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CommerceFlow.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
