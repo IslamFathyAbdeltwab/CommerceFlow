@@ -142,6 +142,23 @@ internal sealed class ProductRepository(CommerceFlowDbContext dbContext) : IProd
         return await query.AnyAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<VariantCheckoutSnapshot>> GetVariantSnapshotsAsync(
+        IReadOnlyCollection<Guid> variantIds, CancellationToken cancellationToken = default)
+    {
+        var ids = variantIds.ToList();
+        if (ids.Count == 0)
+            return [];
+
+        // projection, not the aggregate: checkout reads the catalog and
+        // never writes it (no Include, no tracking)
+        return await (
+            from v in dbContext.ProductVariants.AsNoTracking()
+            join p in dbContext.Products on v.ProductId equals p.Id
+            where ids.Contains(v.Id)
+            select new VariantCheckoutSnapshot(v.Id, v.Sku, p.Name, v.Price))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(Product product, CancellationToken cancellationToken = default)
         => await dbContext.Products.AddAsync(product, cancellationToken);
 

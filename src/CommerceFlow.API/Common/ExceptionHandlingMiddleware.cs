@@ -25,6 +25,10 @@ public sealed class ExceptionHandlingMiddleware(
         {
             await WriteProblemAsync(context, StatusCodes.Status409Conflict, ex.Message);
         }
+        catch (UnauthorizedException ex)
+        {
+            await WriteProblemAsync(context, StatusCodes.Status401Unauthorized, ex.Message);
+        }
         catch (FluentValidation.ValidationException ex)
         {
             await WriteValidationAsync(context, ex);
@@ -84,6 +88,7 @@ public sealed class ExceptionHandlingMiddleware(
     private static string ReasonFor(int statusCode) => statusCode switch
     {
         StatusCodes.Status400BadRequest => "Bad Request",
+        StatusCodes.Status401Unauthorized => "Unauthorized",
         StatusCodes.Status404NotFound => "Not Found",
         StatusCodes.Status409Conflict => "Conflict",
         _ => "Internal Server Error"

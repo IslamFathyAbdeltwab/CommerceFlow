@@ -1219,6 +1219,48 @@ namespace CommerceFlow.Infrastructure.Persistence.Migrations
                     b.ToTable("ShipmentItems", (string)null);
                 });
 
+            modelBuilder.Entity("CommerceFlow.Domain.Entities.Users.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset?>("LastLoginAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
+                });
+
             modelBuilder.Entity("CommerceFlow.Domain.Entities.Wishlists.Wishlist", b =>
                 {
                     b.Property<Guid>("Id")

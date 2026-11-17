@@ -203,7 +203,7 @@ public sealed class CartValidatorTests
     public void Checkout_WithValidInput_IsValid()
     {
         var result = new CheckoutCartCommandValidator()
-            .Validate(new CheckoutCartCommand(Guid.NewGuid()));
+            .Validate(new CheckoutCartCommand(Guid.NewGuid(), CartFixtures.ValidAddress()));
 
         Assert.True(result.IsValid);
     }
@@ -212,10 +212,57 @@ public sealed class CartValidatorTests
     public void Checkout_WithEmptyCartId_IsInvalid()
     {
         var result = new CheckoutCartCommandValidator()
-            .Validate(new CheckoutCartCommand(Guid.Empty));
+            .Validate(new CheckoutCartCommand(Guid.Empty, CartFixtures.ValidAddress()));
 
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.PropertyName == nameof(CheckoutCartCommand.CartId));
+    }
+
+    [Fact]
+    public void Checkout_WithoutAddress_IsInvalid()
+    {
+        var result = new CheckoutCartCommandValidator()
+            .Validate(new CheckoutCartCommand(Guid.NewGuid(), null!));
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == nameof(CheckoutCartCommand.ShippingAddress));
+    }
+
+    [Fact]
+    public void Checkout_WithAddressMissingFullName_IsInvalid()
+    {
+        var result = new CheckoutCartCommandValidator()
+            .Validate(new CheckoutCartCommand(
+                Guid.NewGuid(),
+                CartFixtures.ValidAddress(fullName: "")));
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == "ShippingAddress.FullName");
+    }
+
+    [Fact]
+    public void Checkout_WithAddressMissingCity_IsInvalid()
+    {
+        var result = new CheckoutCartCommandValidator()
+            .Validate(new CheckoutCartCommand(
+                Guid.NewGuid(),
+                CartFixtures.ValidAddress(city: "")));
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == "ShippingAddress.City");
+    }
+
+    [Fact]
+    public void Checkout_WithTooLongCustomerNote_IsInvalid()
+    {
+        var result = new CheckoutCartCommandValidator()
+            .Validate(new CheckoutCartCommand(
+                Guid.NewGuid(),
+                CartFixtures.ValidAddress(),
+                new string('n', 1001)));
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == nameof(CheckoutCartCommand.CustomerNote));
     }
 
     // ---------- AbandonCart ----------

@@ -1,3 +1,4 @@
+using CommerceFlow.Application.Carts.Commands.CheckoutCart;
 using CommerceFlow.Domain.Entities.Carts;
 using CommerceFlow.Domain.Enums;
 
@@ -59,4 +60,14 @@ internal static class CartFixtures
 
         return (cart, variantId);
     }
+
+    // Checkout needs a shipping address (command-owned DTO) - a plain valid
+    // one for every test that is not itself about the address.
+    public static CheckoutAddressDto ValidAddress(
+        string fullName = "Jane Doe",
+        string line1 = "1 Test Street",
+        string city = "Cairo",
+        string postalCode = "12345",
+        string country = "EG") =>
+        new(fullName, line1, city, postalCode, country);
 }

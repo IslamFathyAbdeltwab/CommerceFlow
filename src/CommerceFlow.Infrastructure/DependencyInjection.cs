@@ -1,4 +1,5 @@
 using CommerceFlow.Application.Addresses.Interfaces;
+using CommerceFlow.Application.Auth.Interfaces;
 using CommerceFlow.Application.Carts.Interfaces;
 using CommerceFlow.Application.Catalog.Interfaces;
 using CommerceFlow.Application.Common.Interfaces;
@@ -13,6 +14,7 @@ using CommerceFlow.Application.Reviews.Interfaces;
 using CommerceFlow.Application.Shipping.Interfaces;
 using CommerceFlow.Application.Wishlists.Interfaces;
 using CommerceFlow.Infrastructure.Addresses;
+using CommerceFlow.Infrastructure.Auth;
 using CommerceFlow.Infrastructure.Catalog.Brands;
 using CommerceFlow.Infrastructure.Carts;
 using CommerceFlow.Infrastructure.Catalog.Categories;
@@ -77,10 +79,23 @@ public static class DependencyInjection
 
         services.AddScoped<INotificationRepository, NotificationRepository>();
 
+        // Auth: the repository is per-request; the hasher and the token
+        // service are stateless (a key + a KDF), so they live as singletons
+        // and are shared by every login.
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<ITokenService, JwtTokenService>();
+
         // The transport lives behind the port: RabbitMQ today, an in-process
         // channel could replace it with one line - Application never sees the
         // broker. Singleton because it owns the (lazy) connection.
         services.AddSingleton<INotificationQueue, RabbitNotificationQueue>();
+
+        // ...and the other half of that transport: the in-process worker that
+        // drains the queue and confirms delivery through the same command the
+        // /sent endpoint runs. Hosted services are singletons by nature; a
+        // missing broker only costs it a quiet reconnect loop.
+        services.AddHostedService<RabbitNotificationConsumer>();
 
         // Strategy: one class per provider + one line here to add another
         // (open/closed). The resolver picks the implementation by name.

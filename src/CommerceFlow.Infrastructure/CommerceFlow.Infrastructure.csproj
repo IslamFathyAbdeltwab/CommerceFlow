@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The delivery worker drives the same application commands the HTTP
+         endpoints do (one confirm contract), so Infrastructure needs the
+         Application layer on top of the ports it already implements. -->
+    <ProjectReference Include="..\CommerceFlow.Application\CommerceFlow.Application.csproj" />
     <ProjectReference Include="..\CommerceFlow.Abstraction\CommerceFlow.Abstraction.csproj" />
     <ProjectReference Include="..\CommerceFlow.Domain\CommerceFlow.Domain.csproj" />
   </ItemGroup>
@@ -15,7 +19,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.0" />
     <PackageReference Include="RabbitMQ.Client" Version="7.2.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.23.0" />
   </ItemGroup>
 
 </Project>

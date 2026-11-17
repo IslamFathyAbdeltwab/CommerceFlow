@@ -4,9 +4,11 @@ using CommerceFlow.Application.Orders.Commands.CancelOrder;
 using CommerceFlow.Application.Orders.Commands.ConfirmOrder;
 using CommerceFlow.Application.Orders.Commands.DeliverOrder;
 using CommerceFlow.Application.Orders.Commands.ShipOrder;
+using CommerceFlow.Application.Orders.Events;
 using CommerceFlow.Application.Orders.Interfaces;
 using CommerceFlow.Domain.Entities.Orders;
 using CommerceFlow.Domain.Enums;
+using MediatR;
 using Moq;
 
 namespace CommerceFlow.Application.Tests.Orders;
@@ -14,6 +16,7 @@ namespace CommerceFlow.Application.Tests.Orders;
 public sealed class OrderLifecycleCommandHandlerTests
 {
     private readonly Mock<IOrderRepository> _orders = new();
+    private readonly Mock<IMediator> _mediator = new();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
 
     private void SetupOrder(Order order) =>
@@ -26,7 +29,7 @@ public sealed class OrderLifecycleCommandHandlerTests
     [Fact]
     public async Task Confirm_WhenOrderDoesNotExist_ThrowsNotFound()
     {
-        var handler = new ConfirmOrderCommandHandler(_orders.Object, _unitOfWork.Object);
+        var handler = new ConfirmOrderCommandHandler(_orders.Object, _mediator.Object, _unitOfWork.Object);
         var orderId = Guid.NewGuid();
         _orders
             .Setup(x => x.GetByIdAsync(orderId, It.IsAny<CancellationToken>()))
@@ -36,13 +39,16 @@ public sealed class OrderLifecycleCommandHandlerTests
             handler.Handle(new ConfirmOrderCommand(orderId), CancellationToken.None));
 
         Assert.Contains("Order", exception.Message);
+        _mediator.Verify(
+            x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()),
+            Times.Never);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     public async Task Confirm_WhenOrderIsAlreadyConfirmed_ThrowsConflict()
     {
-        var handler = new ConfirmOrderCommandHandler(_orders.Object, _unitOfWork.Object);
+        var handler = new ConfirmOrderCommandHandler(_orders.Object, _mediator.Object, _unitOfWork.Object);
         var order = OrderFixtures.CreateOrder(OrderStatus.Confirmed);
         SetupOrder(order);
 
@@ -50,13 +56,16 @@ public sealed class OrderLifecycleCommandHandlerTests
             handler.Handle(new ConfirmOrderCommand(order.Id), CancellationToken.None));
 
         Assert.Contains("Only pending orders can be confirmed (current: Confirmed)", exception.Message);
+        _mediator.Verify(
+            x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()),
+            Times.Never);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     public async Task Confirm_WithoutLines_ThrowsConflict()
     {
-        var handler = new ConfirmOrderCommandHandler(_orders.Object, _unitOfWork.Object);
+        var handler = new ConfirmOrderCommandHandler(_orders.Object, _mediator.Object, _unitOfWork.Object);
         var order = Order.Create(OrderFixtures.CustomerId, OrderFixtures.CreateAddress()); // no lines
         SetupOrder(order);
 
@@ -64,20 +73,60 @@ public sealed class OrderLifecycleCommandHandlerTests
             handler.Handle(new ConfirmOrderCommand(order.Id), CancellationToken.None));
 
         Assert.Contains("Cannot confirm an order without lines", exception.Message);
+        _mediator.Verify(
+            x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()),
+            Times.Never);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     public async Task Confirm_WhenPendingWithLines_ConfirmsAndSaves()
     {
-        var handler = new ConfirmOrderCommandHandler(_orders.Object, _unitOfWork.Object);
+        var handler = new ConfirmOrderCommandHandler(_orders.Object, _mediator.Object, _unitOfWork.Object);
         var order = OrderFixtures.CreateOrder();
         SetupOrder(order);
 
         await handler.Handle(new ConfirmOrderCommand(order.Id), CancellationToken.None);
 
         Assert.Equal(OrderStatus.Confirmed, order.Status);
+        _mediator.Verify(
+            x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()),
+            Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Confirm_PublishesOrderConfirmedEventBeforeSaving()
+    {
+        var handler = new ConfirmOrderCommandHandler(_orders.Object, _mediator.Object, _unitOfWork.Object);
+        var order = OrderFixtures.CreateOrder();
+        SetupOrder(order);
+
+        // record the exact sequence: the event is published while the order
+        // change is still uncommitted, so subscribers share this unit of work
+        var calls = new List<string>();
+        _mediator
+            .Setup(x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()))
+            .Callback<INotification, CancellationToken>((_, _) => calls.Add("publish"))
+            .Returns(Task.CompletedTask);
+        _unitOfWork
+            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .Callback(() => calls.Add("save"))
+            .ReturnsAsync(1);
+
+        await handler.Handle(new ConfirmOrderCommand(order.Id), CancellationToken.None);
+
+        _mediator.Verify(
+            x => x.Publish(
+                It.Is<OrderConfirmedIntegrationEvent>(e =>
+                    e.OrderId == order.Id &&
+                    e.CustomerId == order.CustomerId &&
+                    e.OrderNumber == order.OrderNumber &&
+                    e.GrandTotal == order.GrandTotal &&
+                    e.Currency == order.Currency),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+        Assert.Equal(new[] { "publish", "save" }, calls);
     }
 
     // ---------- Ship ----------

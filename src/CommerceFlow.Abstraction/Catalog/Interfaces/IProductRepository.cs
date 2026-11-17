@@ -49,4 +49,20 @@ public interface IProductRepository
     Task<bool> SkuExistsAsync(string sku, Guid? excludeVariantId = null, CancellationToken cancellationToken = default);
 
     Task AddAsync(Product product, CancellationToken cancellationToken = default);
+
+    // Checkout projection: what the catalog says about these variants right
+    // now. Cart lines deliberately carry no price (see CartLine), so this is
+    // where a cart's contents become money - one row per variant that
+    // exists; ids with no match are simply absent, so checkout can refuse
+    // instead of inventing a price for something that is gone.
+    Task<IReadOnlyList<VariantCheckoutSnapshot>> GetVariantSnapshotsAsync(
+        IReadOnlyCollection<Guid> variantIds, CancellationToken cancellationToken = default);
 }
+
+// The money/sku/name a cart line becomes at checkout time. A projection,
+// not an aggregate: it is read once and never written back.
+public sealed record VariantCheckoutSnapshot(
+    Guid ProductVariantId,
+    string Sku,
+    string ProductName,
+    decimal UnitPrice);

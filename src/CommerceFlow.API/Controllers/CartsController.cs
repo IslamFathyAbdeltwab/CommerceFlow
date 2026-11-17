@@ -88,11 +88,17 @@ public sealed class CartsController(ISender sender) : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("{id:guid}/checkout")]
-    public async Task<IActionResult> Checkout(Guid id, CancellationToken cancellationToken = default)
+    [HttpPost("{id:guid}/checkout")] // cart -> order in one commit; returns the new order id
+    public async Task<IActionResult> Checkout(
+        Guid id,
+        CheckoutCartCommand command,
+        CancellationToken cancellationToken = default)
     {
-        await sender.Send(new CheckoutCartCommand(id), cancellationToken);
-        return NoContent();
+        var orderId = await sender.Send(command with { CartId = id }, cancellationToken);
+        return CreatedAtAction(
+            nameof(OrdersController.GetOrderById),
+            new { controller = "Orders", id = orderId },
+            new { id = orderId });
     }
 
     [HttpPost("{id:guid}/abandon")]
